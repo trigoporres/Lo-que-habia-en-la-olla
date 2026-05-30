@@ -1,0 +1,68 @@
+---
+import { getCollection } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import ArticleCard from '../../components/ArticleCard.astro';
+
+export async function getStaticPaths() {
+  const articles = await getCollection('articles', ({ data }) => !data.draft);
+
+  const tagSet = new Set<string>();
+  articles.forEach(article => article.data.tags.forEach(tag => tagSet.add(tag)));
+
+  return Array.from(tagSet).map(tag => {
+    const tagSlug = tag.toLowerCase().replace(/\s+/g, '-');
+    const filtered = articles
+      .filter(a => a.data.tags.includes(tag))
+      .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf());
+
+    return {
+      params: { tag: tagSlug },
+      props: { tag, articles: filtered },
+    };
+  });
+}
+
+const { tag, articles } = Astro.props;
+---
+
+<BaseLayout
+  title={`Etiqueta: ${tag}`}
+  description={`Artículos sobre ${tag} en Lo que había en la olla.`}
+>
+  <div class="max-w-3xl mx-auto px-6 py-16">
+    <header class="mb-16">
+      <a
+        href="/"
+        class="inline-flex items-center gap-2 font-sans text-sm text-[#7A736A] hover:text-[#1A1714] transition-colors duration-150 mb-10"
+      >
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M11 7H3M7 11L3 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        Inicio
+      </a>
+
+      <p class="font-sans text-xs uppercase tracking-widest text-[#8B3A2A] mb-3">
+        Etiqueta
+      </p>
+      <h1 class="font-display text-4xl font-bold text-[#1A1714] leading-tight">
+        {tag}
+      </h1>
+      <p class="font-sans text-sm text-[#A09890] mt-2">
+        {articles.length} {articles.length === 1 ? 'artículo' : 'artículos'}
+      </p>
+    </header>
+
+    <section aria-label={`Artículos sobre ${tag}`}>
+      {articles.map(article => (
+        <ArticleCard
+          slug={article.id}
+          title={article.data.title}
+          description={article.data.description}
+          pubDate={article.data.pubDate}
+          tags={article.data.tags}
+          series={article.data.series}
+        />
+      ))}
+    </section>
+  </div>
+</BaseLayout>

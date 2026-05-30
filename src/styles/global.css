@@ -1,0 +1,150 @@
+@import "tailwindcss";
+
+@theme {
+  --font-display: "Playfair Display", Georgia, "Times New Roman", serif;
+  --font-serif: Lora, Georgia, "Times New Roman", serif;
+  --font-sans: Inter, system-ui, -apple-system, sans-serif;
+
+  --color-cream: #F5EFE0;
+  --color-parchment: #EAE2D0;
+  --color-ink: #1A1714;
+  --color-ink-soft: #4A4540;
+  --color-ink-muted: #7A736A;
+  --color-ink-faint: #A09890;
+  --color-ember: #8B3A2A;
+  --color-ember-dark: #6B2B1D;
+  --color-border: #D8D0C0;
+  --color-tag: #E8E0D0;
+}
+
+html {
+  background-color: var(--color-cream);
+  color: var(--color-ink);
+  font-family: var(--font-serif);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Prose styles for article content */
+.prose {
+  font-family: var(--font-serif);
+  font-size: 1.0625rem;
+  line-height: 1.85;
+  color: var(--color-ink);
+  max-width: 68ch;
+}
+
+.prose h2 {
+  font-family: var(--font-display);
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 2.5em;
+  margin-bottom: 0.75em;
+  color: var(--color-ink);
+}
+
+.prose h3 {
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+  font-weight: 600;
+  line-height: 1.35;
+  margin-top: 2em;
+  margin-bottom: 0.6em;
+  color: var(--color-ink);
+}
+
+.prose p {
+  margin-bottom: 1.5em;
+}
+
+.prose p:first-of-type::first-letter {
+  font-family: var(--font-display);
+  font-size: 3.5em;
+  font-weight: 700;
+  float: left;
+  line-height: 0.85;
+  margin-right: 0.1em;
+  margin-top: 0.05em;
+  color: var(--color-ember);
+}
+
+.prose blockquote {
+  border-left: 3px solid var(--color-ember);
+  padding-left: 1.5em;
+  margin: 2em 0;
+  font-style: italic;
+  color: var(--color-ink-soft);
+}
+
+.prose blockquote p::first-letter {
+  font-size: 1em;
+  float: none;
+  margin: 0;
+  color: inherit;
+  font-weight: normal;
+}
+
+.prose strong {
+  font-weight: 600;
+  color: var(--color-ink);
+}
+
+.prose hr {
+  border: none;
+  border-top: 1px solid var(--color-border);
+  margin: 3em auto;
+  width: 40%;
+}
+
+.prose ul {
+  list-style: none;
+  padding: 0;
+  margin-bottom: 1.5em;
+}
+
+.prose ul li {
+  padding-left: 1.5em;
+  position: relative;
+  margin-bottom: 0.5em;
+}
+
+.prose ul li::before {
+  content: "—";
+  position: absolute;
+  left: 0;
+  color: var(--color-ink-muted);
+}
+
+.prose ol {
+  counter-reset: list-counter;
+  padding: 0;
+  margin-bottom: 1.5em;
+}
+
+.prose ol li {
+  counter-increment: list-counter;
+  padding-left: 2em;
+  position: relative;
+  margin-bottom: 0.5em;
+}
+
+.prose ol li::before {
+  content: counter(list-counter) ".";
+  position: absolute;
+  left: 0;
+  color: var(--color-ember);
+  font-family: var(--font-display);
+  font-weight: 600;
+}
+
+.prose a {
+  color: var(--color-ember);
+  text-decoration: underline;
+  text-decoration-color: color-mix(in srgb, var(--color-ember) 40%, transparent);
+  text-underline-offset: 3px;
+  transition: text-decoration-color 0.2s;
+}
+
+.prose a:hover {
+  text-decoration-color: var(--color-ember);
+}

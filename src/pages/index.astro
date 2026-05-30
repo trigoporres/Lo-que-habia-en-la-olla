@@ -1,0 +1,58 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ArticleCard from '../components/ArticleCard.astro';
+import { getCollection } from 'astro:content';
+
+const allArticles = await getCollection('articles', ({ data }) => !data.draft);
+const articles = allArticles.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+---
+
+<BaseLayout
+  title="Lo que había en la olla"
+  description="Historia de la cocina contada desde los que cocinaban. Personajes, oficios y platos vistos desde abajo: el trabajo, la clase, el poder, la supervivencia."
+>
+  <div class="max-w-3xl mx-auto px-6 py-16">
+
+    <!-- Blog intro -->
+    <section class="mb-16 pb-16 border-b border-[#D8D0C0]" aria-label="Presentación">
+      <div class="max-w-xl">
+        <p class="font-sans text-xs uppercase tracking-widest text-[#8B3A2A] mb-4">
+          De qué va esto
+        </p>
+        <p class="font-serif text-[#1A1714] text-xl leading-relaxed mb-4">
+          La historia de la gastronomía se cuenta habitualmente desde las mesas:
+          los banquetes, los recetarios, los cocineros célebres.
+          Este blog mira hacia el otro lado.
+        </p>
+        <p class="font-serif text-[#4A4540] text-base leading-relaxed">
+          Quién encendía el fuego. Quién cortaba la carne. Quién cargaba el agua.
+          Historia de la cocina contada desde el trabajo, la clase y la supervivencia —
+          no desde el placer de los que comían.
+        </p>
+      </div>
+    </section>
+
+    <!-- Articles list -->
+    <section aria-label="Artículos">
+      {articles.length === 0 ? (
+        <p class="font-serif italic text-[#7A736A] text-center py-12">
+          Próximamente.
+        </p>
+      ) : (
+        articles.map(article => (
+          <ArticleCard
+            slug={article.id}
+            title={article.data.title}
+            description={article.data.description}
+            pubDate={article.data.pubDate}
+            tags={article.data.tags}
+            series={article.data.series}
+          />
+        ))
+      )}
+    </section>
+
+  </div>
+</BaseLayout>

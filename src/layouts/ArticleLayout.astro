@@ -1,0 +1,138 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import TagPill from '../components/TagPill.astro';
+import SeriesBadge from '../components/SeriesBadge.astro';
+import { getCollection } from 'astro:content';
+
+interface Props {
+  title: string;
+  description: string;
+  pubDate: Date;
+  updatedDate?: Date;
+  author: string;
+  tags: string[];
+  series?: {
+    name: string;
+    slug: string;
+    part: number;
+    totalParts: number;
+  };
+}
+
+const { title, description, pubDate, updatedDate, author, tags, series } = Astro.props;
+
+const formattedPubDate = pubDate.toLocaleDateString('es-ES', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+const formattedUpdatedDate = updatedDate?.toLocaleDateString('es-ES', {
+  year: 'numeric',
+  month: 'long',
+  day: 'numeric',
+});
+
+// Get series siblings if applicable
+let seriesArticles: Array<{ slug: string; data: { title: string; series?: { part: number } } }> = [];
+if (series) {
+  const allArticles = await getCollection('articles', ({ data }) =>
+    !data.draft && data.series?.slug === series.slug
+  );
+  seriesArticles = allArticles
+    .sort((a, b) => (a.data.series?.part ?? 0) - (b.data.series?.part ?? 0))
+    .map(a => ({ slug: a.id, data: a.data }));
+}
+---
+
+<BaseLayout
+  title={title}
+  description={description}
+  article={{ pubDate, author, tags }}
+>
+  <div class="max-w-3xl mx-auto px-6 py-16">
+
+    <!-- Back link -->
+    <a
+      href="/"
+      class="inline-flex items-center gap-2 font-sans text-sm text-[#7A736A] hover:text-[#1A1714] transition-colors duration-150 mb-12"
+    >
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+        <path d="M11 7H3M7 11L3 7l4-4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      Todos los artículos
+    </a>
+
+    <!-- Article header -->
+    <header class="mb-12">
+      {series && (
+        <div class="mb-6">
+          <SeriesBadge {...series} />
+        </div>
+      )}
+
+      <h1 class="font-display text-4xl md:text-5xl font-bold text-[#1A1714] leading-tight mb-6">
+        {title}
+      </h1>
+
+      <p class="font-serif italic text-[#4A4540] text-xl leading-relaxed mb-8">
+        {description}
+      </p>
+
+      <div class="flex flex-wrap items-center gap-4 border-t border-b border-[#D8D0C0] py-4">
+        <div class="flex items-center gap-3 font-sans text-sm text-[#7A736A]">
+          <time datetime={pubDate.toISOString()}>
+            {formattedPubDate}
+          </time>
+          {updatedDate && (
+            <span title={`Actualizado el ${formattedUpdatedDate}`} class="text-[#A09890]">
+              · actualizado {formattedUpdatedDate}
+            </span>
+          )}
+        </div>
+        <div class="flex flex-wrap gap-2 ml-auto">
+          {tags.map(tag => <TagPill tag={tag} />)}
+        </div>
+      </div>
+    </header>
+
+    <!-- Article content -->
+    <div class="prose">
+      <slot />
+    </div>
+
+    <!-- Series navigation -->
+    {series && seriesArticles.length > 1 && (
+      <nav class="mt-16 border-t border-[#D8D0C0] pt-10" aria-label="Navegación de la serie">
+        <p class="font-sans text-xs uppercase tracking-widest text-[#8B3A2A] mb-4">
+          Más de esta serie
+        </p>
+        <ol class="space-y-3">
+          {seriesArticles.map(article => {
+            const isCurrentPart = article.data.series?.part === series.part;
+            return (
+              <li class="flex items-baseline gap-3">
+                <span class="font-display font-semibold text-[#A09890] text-sm w-6 shrink-0">
+                  {article.data.series?.part}
+                </span>
+                {isCurrentPart ? (
+                  <span class="font-serif text-[#1A1714] font-medium" aria-current="page">
+                    {article.data.title}
+                  </span>
+                ) : (
+                  <a
+                    href={`/articulos/${article.slug}`}
+                    class="font-serif text-[#8B3A2A] hover:text-[#6B2B1D] hover:underline decoration-1 underline-offset-3 transition-colors duration-150"
+                  >
+                    {article.data.title}
+                  </a>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </nav>
+    )}
+
+  </div>
+</BaseLayout>
