@@ -1,17 +1,14 @@
 ---
 const pathname = Astro.url.pathname;
-
-const nav = [
-  { href: '/', label: 'Inicio' },
-  { href: '/sobre', label: 'Sobre el blog' },
-];
 ---
 
 <header class="border-b border-[#D8D0C0]">
   <div class="max-w-3xl mx-auto px-6 py-8">
     <div class="text-center mb-6">
       <a href="/" class="group inline-block">
-        <h1 class="font-display text-4xl md:text-5xl font-bold tracking-tight text-[#1A1714] leading-tight group-hover:text-[#8B3A2A] transition-colors duration-300">
+        <h1
+          class="font-display text-4xl md:text-5xl font-bold tracking-tight text-[#1A1714] leading-tight group-hover:text-[#8B3A2A] transition-colors duration-300"
+        >
           Lo que había en la olla
         </h1>
       </a>
@@ -19,22 +16,5 @@ const nav = [
         Historia de la cocina contada desde los que cocinaban
       </p>
     </div>
-
-    <nav class="flex justify-center gap-8" aria-label="Navegación principal">
-      {nav.map(({ href, label }) => (
-        <a
-          href={href}
-          class={[
-            'font-sans text-sm tracking-wide uppercase transition-colors duration-200',
-            pathname === href
-              ? 'text-[#8B3A2A] border-b border-[#8B3A2A]'
-              : 'text-[#7A736A] hover:text-[#1A1714]',
-          ].join(' ')}
-          aria-current={pathname === href ? 'page' : undefined}
-        >
-          {label}
-        </a>
-      ))}
-    </nav>
   </div>
 </header>
