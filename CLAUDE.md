@@ -48,20 +48,42 @@ Las series se agrupan por `series.slug` e incluyen `name`, `part` y
 `totalParts`. La navegación de series se calcula en `ArticleLayout` consultando
 toda la colección.
 
-## Revisión de artículos
+## Flujo de un post
 
-Tres skills del proyecto (en `.claude/skills/`), pensadas para ejecutarse en
-este orden sobre un post terminado:
+1. **Investigación**: el autor vuelca fuentes, libros, ideas y dudas, sin
+   estructura fija, en `notas/<slug>.md`. Las notas son públicas a propósito
+   (el repo es público y forma parte del proceso).
+2. **Borrador**: el post se escribe en `src/content/articles/<slug>.mdx` con
+   `draft: true`. El sitio oculta los borradores (portada, página del artículo,
+   etiquetas y series filtran por `!data.draft`), así que se puede hacer push
+   con el borrador sin que salga.
+3. **Publicación**: se quita `draft: true` y se hace push a `main`; Vercel
+   despliega. No existe rama de preview ni paso intermedio.
+4. **Fuentes**: los artículos no llevan sección de fuentes ni bibliografía salvo
+   que el autor lo pida expresamente.
+5. **Series**: no se sabe de antemano si un post será serie; el schema las
+   soporta (`series`) y se añaden cuando se decide.
 
-1. `/revisar-ortografia <slug>`: corrige tildes, puntuación y erratas
-   directamente en el fichero (el autor revisa con `git diff`).
-2. `/revisar-lectura <slug>`: informe por pantalla de contradicciones y pasajes
-   confusos, con gravedad. No lee las notas a propósito.
-3. `/revisar-notas <slug>`: informe de discrepancias entre el post y
-   `notas/<slug>.md`.
+### Skills del proyecto (`.claude/skills/`)
 
-Las dos últimas nunca editan el artículo. No se aplican guías de estilo ni se
-reescribe la voz del autor.
+Todas reciben el slug del artículo. Ninguna hace commit ni push.
+
+- `/nuevo-post <slug>`: crea el borrador (`draft: true`) y `notas/<slug>.md`.
+- `/revisar-post <slug>`: encadena las tres revisiones siguientes. La lectura
+  crítica va en un subagente para que sea ciega a las notas.
+  - `/revisar-ortografia`: corrige tildes, puntuación y erratas directamente
+    (el autor revisa con `git diff`).
+  - `/revisar-lectura`: informe de contradicciones y pasajes confusos, con
+    gravedad. No lee las notas a propósito.
+  - `/revisar-notas`: informe de discrepancias entre el post y las notas.
+- `/pendientes <slug>`: anota en las notas lo que hay que investigar según los
+  informes de revisión.
+- `/preparar-publicacion <slug>`: comprobación final antes del push (informa,
+  no edita).
+- `/hilo-social <slug>`: borrador de hilo para redes (no publica).
+
+Las revisiones salvo la ortográfica nunca editan el artículo. No se aplican
+guías de estilo ni se reescribe la voz del autor.
 
 ## Convenciones y gotchas de Astro 6
 
