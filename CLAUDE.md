@@ -48,6 +48,21 @@ Las series se agrupan por `series.slug` e incluyen `name`, `part` y
 `totalParts`. La navegación de series se calcula en `ArticleLayout` consultando
 toda la colección.
 
+## Revisión de artículos
+
+Tres skills del proyecto (en `.claude/skills/`), pensadas para ejecutarse en
+este orden sobre un post terminado:
+
+1. `/revisar-ortografia <slug>`: corrige tildes, puntuación y erratas
+   directamente en el fichero (el autor revisa con `git diff`).
+2. `/revisar-lectura <slug>`: informe por pantalla de contradicciones y pasajes
+   confusos, con gravedad. No lee las notas a propósito.
+3. `/revisar-notas <slug>`: informe de discrepancias entre el post y
+   `notas/<slug>.md`.
+
+Las dos últimas nunca editan el artículo. No se aplican guías de estilo ni se
+reescribe la voz del autor.
+
 ## Convenciones y gotchas de Astro 6
 
 - La config de contenido vive en `src/content.config.ts` (Content Layer API con
